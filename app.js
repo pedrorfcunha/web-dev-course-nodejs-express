@@ -2,33 +2,26 @@ const path = require("path");
 
 const express = require("express");
 
+const defaultRoutes = require("./routes/default");
+const restaurantRoutes = require("./routes/restaurants");
+
 const app = express();
 
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
+
 app.use(express.static("public"));
+app.use(express.urlencoded({ extended: false }));
 
-app.get("/", function(req, res) {
-    const htmlFilePath = path.join(__dirname, "views", "index.html");
-    res.sendFile(htmlFilePath);
+app.use("/", defaultRoutes);
+app.use("/", restaurantRoutes);
+
+app.use(function(req, res) {
+    res.status(404).render("404");
 })
 
-app.get("/restaurants", function(req, res) {
-    const htmlFilePath = path.join(__dirname, "views", "restaurants.html");
-    res.sendFile(htmlFilePath);
-})
-
-app.get("/recommend", function(req, res) {
-    const htmlFilePath = path.join(__dirname, "views", "recommend.html");
-    res.sendFile(htmlFilePath);
-})
-
-app.get("/confirm", function(req, res) {
-    const htmlFilePath = path.join(__dirname, "views", "confirm.html");
-    res.sendFile(htmlFilePath);
-})
-
-app.get("/about", function(req, res) {
-    const htmlFilePath = path.join(__dirname, "views", "about.html");
-    res.sendFile(htmlFilePath);
+app.use(function(error, req, res, next) {
+    res.status(500).render("500");
 })
 
 app.listen(3000);
